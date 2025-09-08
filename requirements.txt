@@ -1,0 +1,22 @@
+# Core audio processing dependencies
+librosa>=0.9.0
+soundfile>=0.10.0
+numpy>=1.19.0
+scipy>=1.6.0
+
+# Speech processing
+speechrecognition>=3.8.0
+pyttsx3>=2.90
+
+# Audio enhancement
+noisereduce>=2.0.0
+
+# Visualization and analysis
+matplotlib>=3.3.0
+scikit-learn>=0.24.0
+
+# Development dependencies
+pytest>=6.0
+pytest-cov>=2.0
+black>=21.0
+flake8>=3.8
