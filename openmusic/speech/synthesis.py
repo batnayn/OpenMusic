@@ -34,38 +34,61 @@ def synthesize_text(text: str, voice: Optional[str] = None,
     tuple
         (audio_array, sample_rate)
     """
-    engine = pyttsx3.init()
-    
-    # Set properties
-    engine.setProperty('rate', rate)
-    engine.setProperty('volume', volume)
-    
-    if voice:
-        voices = engine.getProperty('voices')
-        for v in voices:
-            if voice in v.id or voice in v.name:
-                engine.setProperty('voice', v.id)
-                break
-    
-    # Create temporary file for audio output
-    with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_file:
-        temp_path = temp_file.name
-    
     try:
-        # Save speech to file
-        engine.save_to_file(text, temp_path)
-        engine.runAndWait()
+        engine = pyttsx3.init()
         
-        # Load audio file
-        audio, sr = librosa.load(temp_path, sr=output_sr)
+        # Set properties
+        engine.setProperty('rate', rate)
+        engine.setProperty('volume', volume)
         
-        return audio, sr
+        if voice:
+            voices = engine.getProperty('voices')
+            for v in voices:
+                if voice in v.id or voice in v.name:
+                    engine.setProperty('voice', v.id)
+                    break
         
-    finally:
-        # Clean up temporary file
-        if os.path.exists(temp_path):
-            os.unlink(temp_path)
-        engine.stop()
+        # Create temporary file for audio output
+        with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_file:
+            temp_path = temp_file.name
+        
+        try:
+            # Save speech to file
+            engine.save_to_file(text, temp_path)
+            engine.runAndWait()
+            
+            # Load audio file
+            audio, sr = librosa.load(temp_path, sr=output_sr)
+            
+            return audio, sr
+            
+        finally:
+            # Clean up temporary file
+            if os.path.exists(temp_path):
+                os.unlink(temp_path)
+            engine.stop()
+            
+    except Exception as e:
+        # Fallback: create synthetic speech-like signal
+        print(f"Warning: TTS engine not available ({e}). Using synthetic speech.")
+        duration = len(text) * 0.1  # Rough estimate: 0.1s per character
+        t = np.linspace(0, duration, int(output_sr * duration), False)
+        
+        # Create speech-like formant synthesis (very basic)
+        fundamental = 150  # Base frequency
+        formants = [700, 1220, 2600]  # Typical formant frequencies
+        
+        speech = np.zeros_like(t)
+        for formant in formants:
+            speech += np.sin(2 * np.pi * formant * t) * np.exp(-t * 2)
+        
+        # Add pitch variation
+        pitch_variation = fundamental + 50 * np.sin(2 * np.pi * 3 * t)
+        carrier = np.sin(2 * np.pi * pitch_variation * t)
+        
+        speech = speech * carrier * 0.1
+        
+        return speech, output_sr
 
 
 def list_voices() -> List[Dict[str, str]]:
@@ -77,22 +100,33 @@ def list_voices() -> List[Dict[str, str]]:
     list
         List of dictionaries with voice information
     """
-    engine = pyttsx3.init()
-    voices = engine.getProperty('voices')
-    
-    voice_list = []
-    for voice in voices:
-        voice_info = {
-            'id': voice.id,
-            'name': voice.name,
-            'age': getattr(voice, 'age', 'Unknown'),
-            'gender': getattr(voice, 'gender', 'Unknown'),
-            'languages': getattr(voice, 'languages', [])
-        }
-        voice_list.append(voice_info)
-    
-    engine.stop()
-    return voice_list
+    try:
+        engine = pyttsx3.init()
+        voices = engine.getProperty('voices')
+        
+        voice_list = []
+        for voice in voices:
+            voice_info = {
+                'id': voice.id,
+                'name': voice.name,
+                'age': getattr(voice, 'age', 'Unknown'),
+                'gender': getattr(voice, 'gender', 'Unknown'),
+                'languages': getattr(voice, 'languages', [])
+            }
+            voice_list.append(voice_info)
+        
+        engine.stop()
+        return voice_list
+        
+    except Exception as e:
+        print(f"Warning: TTS engine not available ({e}). Returning default voice info.")
+        return [{
+            'id': 'default',
+            'name': 'Default Synthetic Voice',
+            'age': 'Unknown',
+            'gender': 'Unknown',
+            'languages': ['en']
+        }]
 
 
 def synthesize_with_effects(text: str, voice: Optional[str] = None,

@@ -60,8 +60,9 @@ def detect_segments(audio: np.ndarray, sr: int) -> np.ndarray:
     np.ndarray
         Segment boundary times in seconds
     """
-    # Use librosa's segment detection
-    boundaries = librosa.segment.agglomerative(audio, sr=sr)
+    # Use librosa's segment detection with chroma features
+    chroma = librosa.feature.chroma_cqt(y=audio, sr=sr)
+    boundaries = librosa.segment.agglomerative(chroma, k=4)
     boundary_times = librosa.frames_to_time(boundaries, sr=sr)
     
     return boundary_times
