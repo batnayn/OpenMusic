@@ -17,6 +17,9 @@ from . import enhancement
 from . import effects
 from . import analysis
 
+# AI imports - The massive AI enhancement
+from . import ai
+
 # Convenience functions
 from .core import load_audio, save_audio
 
@@ -26,6 +29,7 @@ __all__ = [
     "enhancement",
     "effects",
     "analysis",
+    "ai",  # Massive AI capabilities
     "load_audio",
     "save_audio",
 ]
