@@ -1,8 +1,53 @@
-# OpenMusic - Comprehensive Audio Processing Library
+# OpenMusic - AI-Powered Music Generation & Comprehensive Audio Processing Library
 
-OpenMusic is a powerful Python library for audio processing, featuring over 1000 audio processing capabilities including feature extraction, speech processing, audio enhancement, and music analysis.
+OpenMusic is a revolutionary Python library that combines AI-powered music generation with over 1000 audio processing capabilities. Create original songs from simple text prompts or leverage advanced audio processing features including feature extraction, speech processing, audio enhancement, and music analysis.
+
+## 🤖 NEW: AI-Powered Music Generation
+
+### Text-to-Music Generation
+Transform text descriptions into original musical compositions:
+
+```python
+import openmusic as om
+
+# Generate music from a text prompt
+audio, sr, metadata = om.generate_music_from_prompt(
+    "Create an upbeat pop song with catchy melody and driving drums",
+    duration=30.0
+)
+
+# Generate a complete song with structure
+song_audio, sr, song_metadata = om.generate_song(
+    "Create an emotional rock ballad about overcoming challenges",
+    structure="verse-chorus-verse-chorus-bridge-chorus"
+)
+
+# Save the generated music
+om.save_audio("my_generated_song.wav", song_audio, sr)
+```
+
+### How It Works
+1. **Prompt Processing**: Advanced text analysis extracts musical parameters (genre, mood, tempo, key, instruments)
+2. **AI Music Generation**: Intelligent composition engine creates melodies, harmonies, rhythms, and bass lines
+3. **Professional Effects**: Automatic application of reverb, compression, and other effects based on style
+4. **Song Structure**: Support for complete songs with verses, choruses, bridges, and smooth transitions
+
+### Example Prompts
+- "Create an upbeat, anthemic pop song with powerful vocals and soaring chorus"
+- "Generate a melancholy piano ballad in A minor with gentle strings"  
+- "Make energetic electronic dance music with heavy bass and synthesizers"
+- "Compose a relaxing jazz piece with saxophone and soft piano"
+- "Create mysterious ambient music with dark, ethereal sounds"
 
 ## Features
+
+### 🤖 AI-Powered Music Generation
+- **Text-to-Music**: Generate original songs from text descriptions
+- **Prompt Processing**: Intelligent extraction of musical parameters from natural language
+- **Multi-Genre Support**: Pop, rock, jazz, electronic, classical, folk, and more
+- **Mood Recognition**: Happy, sad, energetic, calm, mysterious, romantic moods
+- **Song Structure**: Complete songs with verses, choruses, bridges, and transitions
+- **Smart Instrumentation**: Automatic selection of appropriate instruments for each genre
 
 ### 🎵 Audio Feature Extraction
 - **MFCCs (Mel-Frequency Cepstral Coefficients)**: Extract perceptual audio features
@@ -49,6 +94,26 @@ pip install -e .
 
 ## Quick Start
 
+### AI Music Generation
+```python
+import openmusic as om
+
+# Simple text-to-music generation
+audio, sr, metadata = om.generate_music_from_prompt(
+    "Create a happy pop song with piano and drums"
+)
+
+# Generate a complete structured song
+song, sr, metadata = om.generate_song(
+    "Rock ballad about overcoming challenges",
+    structure="intro-verse-chorus-verse-chorus-bridge-chorus"
+)
+
+# Save your creation
+om.save_audio("my_song.wav", song, sr)
+```
+
+### Audio Processing
 ```python
 import openmusic as om
 import numpy as np

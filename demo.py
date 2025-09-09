@@ -204,7 +204,106 @@ def demo_audio_enhancement():
     print(f"   • Normalization: Target -18 LUFS")
     print(f"   • Noise gate: -40dB threshold")
 
+def demo_text_to_music_generation():
+    """Demonstrate AI-powered text-to-music generation."""
+    print("\n🤖 AI-POWERED TEXT-TO-MUSIC GENERATION")
+    print("=" * 50)
+    
+    # Example prompts showcasing different capabilities
+    example_prompts = [
+        {
+            'prompt': "Create an upbeat pop song with catchy melody and driving drums",
+            'duration': 15.0,
+            'name': "upbeat_pop"
+        },
+        {
+            'prompt': "Generate a melancholy piano ballad in minor key with soft strings", 
+            'duration': 12.0,
+            'name': "piano_ballad"
+        },
+        {
+            'prompt': "Make energetic electronic dance music with powerful bass and synths",
+            'duration': 10.0,
+            'name': "electronic_dance"
+        }
+    ]
+    
+    generated_tracks = {}
+    
+    for i, example in enumerate(example_prompts):
+        print(f"\n🎵 Example {i+1}: {example['name']}")
+        print(f"   Prompt: \"{example['prompt']}\"")
+        
+        try:
+            # Generate music from text prompt
+            audio, sr, metadata = om.generate_music_from_prompt(
+                example['prompt'], 
+                duration=example['duration']
+            )
+            
+            params = metadata['extracted_parameters']
+            print(f"   ✅ Generated {params['genre']} music in {params['key']}")
+            print(f"   ✅ Tempo: {params['tempo_bpm']} BPM, Mood: {params['mood']}")
+            print(f"   ✅ Duration: {len(audio)/sr:.1f}s, Instruments: {', '.join(params['instruments'][:3])}")
+            
+            generated_tracks[example['name']] = {
+                'audio': audio,
+                'sr': sr,
+                'metadata': metadata
+            }
+            
+        except Exception as e:
+            print(f"   ❌ Generation failed: {e}")
+    
+    # Demonstrate complete song generation with structure
+    print(f"\n🎼 Complete Song Generation:")
+    try:
+        song_prompt = "Create an emotional rock ballad about overcoming challenges with powerful vocals"
+        song_audio, song_sr, song_metadata = om.generate_song(
+            song_prompt,
+            structure="intro-verse-chorus-verse-chorus-bridge-chorus"
+        )
+        
+        print(f"   ✅ Generated complete song: {len(song_audio)/song_sr:.1f} seconds")
+        print(f"   ✅ Structure: {song_metadata['structure']}")
+        print(f"   ✅ Sections: {', '.join([s['type'] for s in song_metadata['sections']])}")
+        
+        generated_tracks['complete_song'] = {
+            'audio': song_audio,
+            'sr': song_sr,
+            'metadata': song_metadata
+        }
+        
+    except Exception as e:
+        print(f"   ❌ Song generation failed: {e}")
+    
+    return generated_tracks
+
 def demo_speech_processing():
+    """Demonstrate speech processing capabilities."""
+    print("\n🗣️ SPEECH PROCESSING DEMO")
+    print("=" * 50)
+    
+    # List available voices
+    voices = om.speech.list_voices()
+    print(f"🎤 Available voices: {len(voices)}")
+    for voice in voices[:3]:  # Show first 3
+        print(f"   • {voice['name']} ({voice['gender']})")
+    
+    # Synthesize speech
+    text = "OpenMusic provides comprehensive audio processing with over one thousand features and now includes AI-powered music generation from text prompts."
+    speech, sr = om.speech.synthesize_text(text, rate=160, volume=0.8)
+    print(f"\n💬 Synthesized speech:")
+    print(f"   • Text: \"{text[:50]}...\"")
+    print(f"   • Duration: {len(speech)/sr:.2f} seconds")
+    print(f"   • Sample rate: {sr} Hz")
+    
+    # Voice activity detection
+    vad = om.speech.detect_voice_activity(speech, sr)
+    voice_percentage = np.sum(vad) / len(vad) * 100
+    print(f"   • Voice activity: {voice_percentage:.1f}% of duration")
+    
+    return speech, sr
     """Demonstrate speech processing capabilities."""
     print("\n🗣️ SPEECH PROCESSING DEMO")
     print("=" * 50)
@@ -321,7 +420,7 @@ def main():
     """Run the comprehensive OpenMusic demo."""
     print("🎵" * 20)
     print("🎵 OPENMUSIC COMPREHENSIVE DEMO 🎵")
-    print("🎵 1000+ Audio Processing Features 🎵")
+    print("🎵 AI-Powered Music Generation + 1000+ Audio Features 🎵")
     print("🎵" * 20)
     
     try:
@@ -331,6 +430,9 @@ def main():
         effects = demo_audio_effects()
         demo_audio_enhancement()
         speech_audio, speech_sr = demo_speech_processing()
+        
+        # NEW: Demonstrate AI-powered text-to-music generation
+        generated_tracks = demo_text_to_music_generation()
         
         # Create visualization
         create_feature_visualization()
@@ -345,6 +447,7 @@ def main():
         print("✅ Audio Effects: Reverb, delay, chorus, flanger, phaser, distortion")
         print("✅ Audio Enhancement: Noise reduction, filtering, dynamic processing")
         print("✅ Speech Processing: Text-to-speech, voice activity detection")
+        print("✅ AI Music Generation: Text-to-music, prompt interpretation, song creation")
         print("✅ Performance: Real-time capable processing")
         print("✅ Visualization: Feature analysis plots")
         

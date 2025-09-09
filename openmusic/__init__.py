@@ -16,9 +16,11 @@ from . import speech
 from . import enhancement
 from . import effects
 from . import analysis
+from . import generation
 
 # Convenience functions
 from .core import load_audio, save_audio
+from .generation import generate_music_from_prompt, generate_song
 
 __all__ = [
     "features",
@@ -26,6 +28,9 @@ __all__ = [
     "enhancement",
     "effects",
     "analysis",
+    "generation",
     "load_audio",
     "save_audio",
+    "generate_music_from_prompt",
+    "generate_song",
 ]
